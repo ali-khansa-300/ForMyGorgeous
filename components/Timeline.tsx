@@ -79,7 +79,7 @@ const TIMELINE_DATA: TimelineItem[] = [
     title: "1 Day Left",
     type: "video",
     embedUrl:
-      "https://player.vimeo.com/video/PLACEHOLDER_DAY1"
+      "https://player.vimeo.com/video/1164568755?h=5938e518de&badge=0&portrait=0&title=0&byline=0&controls=0&muted=1"
   },
 
   {
