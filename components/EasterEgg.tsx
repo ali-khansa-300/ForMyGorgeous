@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabaseClient'; // ✅ استيراد Supabase من الملف المُعد مسبقاً
 
 interface EasterEggProps {
   onClose: () => void;
@@ -28,40 +27,15 @@ const EasterEgg: React.FC<EasterEggProps> = ({ onClose }) => {
   ];
 
   // ─────────────────────────────────────────────
-  // 1) جلب حالة العداد من Supabase
+  // 1) تعيين تاريخ ثابت بدل Supabase
   // ─────────────────────────────────────────────
   useEffect(() => {
-    const fetchCounter = async () => {
-      try {
-        // استعلام عن آخر صف في الجدول (بناءً على id الأعلى)
-        const { data, error } = await supabase
-          .from('love_counter')
-          .select('start_time')
-          .order('id', { ascending: false })
-          .limit(1)
-          .single();
+    const fixedDate = "2026-02-19T04:26:11.262Z";
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            // لا يوجد أي صف بعد – هذا طبيعي
-            console.log('لا يوجد بداية عداد مسجلة بعد.');
-          } else {
-            console.error('خطأ في جلب البيانات من Supabase:', error);
-          }
-        }
+    setRemoteStartTime(fixedDate);
+    setIsAgreed(true);
 
-        if (data?.start_time) {
-          setRemoteStartTime(data.start_time);
-          setIsAgreed(true);
-        }
-      } catch (err) {
-        console.error('فشل الاتصال بـ Supabase:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCounter();
+    setIsLoading(false);
   }, []);
 
   // ─────────────────────────────────────────────
@@ -81,7 +55,7 @@ const EasterEgg: React.FC<EasterEggProps> = ({ onClose }) => {
   }, []);
 
   // ─────────────────────────────────────────────
-  // 3) منطق العداد الزمني (لم يتغير جوهرياً)
+  // 3) منطق العداد الزمني (لم يتغير)
   // ─────────────────────────────────────────────
   useEffect(() => {
     let interval: number | undefined;
@@ -124,29 +98,13 @@ const EasterEgg: React.FC<EasterEggProps> = ({ onClose }) => {
   }, [isAgreed, remoteStartTime]);
 
   // ─────────────────────────────────────────────
-  // 4) زر "موافقة" – الإدراج في Supabase فقط أول مرة
+  // 4) زر "موافقة" (لم يتم التعديل عليه)
   // ─────────────────────────────────────────────
   const handleAgree = async () => {
     const now = new Date().toISOString();
 
-    try {
-      // إدراج وقت البدء في Supabase
-      const { error } = await supabase
-        .from('love_counter')
-        .insert({ start_time: now });
-
-      if (error) {
-        console.error('فشل حفظ الوقت في Supabase:', error);
-        // يمكن عرض رسالة للمستخدم إذا أردت
-        return;
-      }
-
-      // بعد النجاح، حدّث الحالة المحلية
-      setRemoteStartTime(now);
-      setIsAgreed(true);
-    } catch (err) {
-      console.error('استثناء أثناء الإدراج:', err);
-    }
+    setRemoteStartTime(now);
+    setIsAgreed(true);
   };
 
   const containerVariants = {
@@ -173,7 +131,6 @@ const EasterEgg: React.FC<EasterEggProps> = ({ onClose }) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-8 overflow-hidden"
     >
-      {/* 🔊 الصوت بالمسار الصحيح من dist */}
       <audio
         ref={voiceAudioRef}
         src="/media/audio/easteregg_voice.mp3"
