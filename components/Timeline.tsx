@@ -87,7 +87,7 @@ const TIMELINE_DATA: TimelineItem[] = [
     title: "Her Birthday & Valentine’s Day",
     type: "video",
     embedUrl:
-      "https://player.vimeo.com/video/1163881092?h=3e959f4abf&badge=0&portrait=0&title=0&byline=0&controls=0&muted=1&autoplay=1&loop=1",
+      "https://player.vimeo.com/video/1163881092?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1",
     isSpecial: true
   }
 ];
